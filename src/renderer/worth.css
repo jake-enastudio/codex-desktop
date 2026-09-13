@@ -345,7 +345,7 @@ main {
   min-height: 175px;
 }
 
-.chart-wrap svg {
+.chart-plot > svg {
   width: 100%;
   height: auto;
   display: block;
@@ -1742,4 +1742,81 @@ dialog select {
   .account-table {
     padding: 0 10px;
   }
+}
+
+/* Compact sidebar and unobtrusive, stable balance privacy. */
+.worth-shell > .sidebar {
+  padding: 8px 8px 12px;
+  gap: 8px;
+}
+.worth-shell .traffic-spacer {
+  height: 20px;
+  flex: 0 0 20px;
+}
+.worth-brand {
+  padding: 0 10px;
+  line-height: 24px;
+  margin: 0 0 4px;
+  font-size: 17px;
+}
+.worth-shell .nav-block {
+  gap: 0;
+}
+.worth-shell :is(.ghost-button, .add-project, .settings) {
+  font-size: 12px;
+  font-weight: 400;
+  min-height: 30px;
+  padding: 6px 10px;
+}
+.worth-shell .section-title {
+  font-size: 12px;
+  padding-top: 8px;
+}
+.worth-shell .project-pill strong,
+.worth-shell .thread-item {
+  font-size: 12px;
+}
+.worth-shell .thread-item {
+  min-height: 30px;
+}
+.worth-shell .worth-account-group {
+  margin-bottom: 4px;
+}
+.worth-workspace {
+  grid-template-rows: 48px minmax(0, 1fr);
+}
+.balance-toggle {
+  width: 26px;
+  height: 26px;
+  margin-block: -4px;
+  color: var(--muted);
+}
+.balance-toggle[aria-pressed="true"] {
+  color: var(--text);
+  background: var(--hover);
+}
+.chart-plot {
+  position: relative;
+}
+.balances-hidden .chart-plot {
+  visibility: hidden;
+  pointer-events: none;
+}
+.chart-privacy-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.chart-privacy-label {
+  pointer-events: none;
+}
+.chart-privacy-label svg {
+  width: 16px;
+  height: 16px;
 }

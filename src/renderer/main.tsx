@@ -48,7 +48,6 @@ import {
   value,
   totals,
   dateLabel,
-  sampleData,
 } from "./worthModel.js";
 import "./styles.css";
 import "./worth.css";
@@ -75,7 +74,6 @@ function App() {
   const [data, setData] = useState<Data>(empty),
     [loaded, setLoaded] = useState(false),
     [view, setView] = useState("Overview"),
-    [sample, setSample] = useState(false),
     [privateMode, setPrivate] = useState(false),
     [collapsed, setCollapsed] = useState(false),
     [theme, setTheme] = useState(localStorage.getItem("worth.theme") || "dark");
@@ -88,8 +86,7 @@ function App() {
     [range, setRange] = useState("1Y"),
     [busy, setBusy] = useState(false);
   const [closedGroups, setClosedGroups] = useState<Record<string, boolean>>({});
-  const demo = useRef(sampleData());
-  const shown = sample ? demo.current : data;
+  const shown = data;
   const total = totals(shown);
   const account = shown.accounts.find((a) => a.id === detail);
   useEffect(() => {
@@ -154,7 +151,6 @@ function App() {
         );
     });
   const begin = () => {
-    setSample(false);
     setDetail(null);
     setModal("new");
   };
@@ -254,9 +250,7 @@ function App() {
     <div className={`shell worth-shell ${collapsed ? "collapsed" : ""}`}>
       <aside className="sidebar">
         <div className="traffic-spacer" aria-hidden="true" />
-        <div className="worth-brand">
-          Worth <span>Personal</span>
-        </div>
+        <div className="worth-brand">Worth</div>
         <div className="nav-block top-actions">
           <button
             className={`ghost-button ${view === "Overview" ? "active" : ""}`}
@@ -348,17 +342,19 @@ function App() {
             )}
           </div>
         </section>
-        <button className="add-project" onClick={begin}>
-          <Plus className="sidebar-action-icon" size={16} />
-          Add account
-        </button>
-        <button
-          className={`settings ${view === "Settings" ? "active" : ""}`}
-          onClick={() => nav("Settings")}
-        >
-          <Settings className="sidebar-action-icon" size={16} />
-          Settings
-        </button>
+        <div className="nav-block bottom-actions">
+          <button className="add-project" onClick={begin}>
+            <Plus className="sidebar-action-icon" size={16} />
+            Add account
+          </button>
+          <button
+            className={`settings ${view === "Settings" ? "active" : ""}`}
+            onClick={() => nav("Settings")}
+          >
+            <Settings className="sidebar-action-icon" size={16} />
+            Settings
+          </button>
+        </div>
       </aside>
       <section className="workspace worth-workspace">
         <header className="topbar titlebar">
@@ -384,36 +380,11 @@ function App() {
             )}
           </span>
           <div className="title-actions">
-            {sample && <span className="sample-pill">Sample data</span>}
-            <button
-              className="icon-button"
-              title={privateMode ? "Show balances" : "Hide balances"}
-              aria-label={privateMode ? "Show balances" : "Hide balances"}
-              onClick={() => setPrivate(!privateMode)}
-            >
-              {privateMode ? <EyeOff size={17} /> : <Eye size={17} />}
-            </button>
-            <span className="title-divider" />
             <span className="currency-label">{shown.baseCurrency}</span>
           </div>
         </header>
         <main className="content worth-content">
           <div className="worth-page">
-            {sample && (
-              <div className="sample-banner">
-                <span>
-                  You’re exploring a sample workspace. Your data is unchanged.
-                </span>
-                <button
-                  onClick={() => {
-                    setSample(false);
-                    setDetail(null);
-                  }}
-                >
-                  Exit preview <X size={14} />
-                </button>
-              </div>
-            )}
             {error && (
               <div role="alert" className="error-banner">
                 <span>{error}</span>
@@ -440,10 +411,6 @@ function App() {
                           Everything you own. Everything you owe. One place.
                         </p>
                       </div>
-                      <button className="button primary" onClick={begin}>
-                        <Plus size={16} />
-                        Add account
-                      </button>
                     </div>
                     {shown.accounts.length === 0 ? (
                       <>
@@ -457,20 +424,11 @@ function App() {
                           <div className="eyebrow">A CLEARER START</div>
                           <h2>Your whole picture starts here.</h2>
                           <p>
-                            Add your first account to see where you stand.
+                            Use Add account in the sidebar to get started.
                             <br />
                             Build a history, one balance update at a time.
                           </p>
-                          <button className="button primary" onClick={begin}>
-                            <Plus size={16} />
-                            Add your first account
-                          </button>
-                          <button
-                            className="text-button"
-                            onClick={() => setSample(true)}
-                          >
-                            Explore a sample workspace <ArrowRight size={14} />
-                          </button>
+
                           <div className="welcome-trust">
                             <HardDrive size={14} />
                             Local to your Mac<span>·</span>No bank connection
@@ -509,7 +467,30 @@ function App() {
                           <div className="wealth-top">
                             <div>
                               <div className="section-label">
-                                Total net worth <span className="subtle-dot" />
+                                Total net worth
+                                <button
+                                  className="icon-button balance-toggle"
+                                  title={
+                                    privateMode
+                                      ? "Show balances"
+                                      : "Hide balances"
+                                  }
+                                  aria-label={
+                                    privateMode
+                                      ? "Show balances"
+                                      : "Hide balances"
+                                  }
+                                  aria-pressed={privateMode}
+                                  onClick={() =>
+                                    setPrivate((current) => !current)
+                                  }
+                                >
+                                  {privateMode ? (
+                                    <EyeOff size={17} />
+                                  ) : (
+                                    <Eye size={17} />
+                                  )}
+                                </button>
                               </div>
                               <div className="net-worth">
                                 {money(total.net)}
@@ -517,6 +498,12 @@ function App() {
                               </div>
                               <div
                                 className={`change ${change < 0 ? "negative" : ""}`}
+                                style={{
+                                  visibility: privateMode
+                                    ? "hidden"
+                                    : "visible",
+                                }}
+                                aria-hidden={privateMode}
                               >
                                 {change < 0 ? (
                                   <ArrowDownLeft size={15} />
@@ -669,10 +656,6 @@ function App() {
                         <h1>Accounts</h1>
                         <p>A home for every part of your net worth.</p>
                       </div>
-                      <button className="button primary" onClick={begin}>
-                        <Plus size={16} />
-                        Add account
-                      </button>
                     </div>
                     <div className="accounts-total">
                       <span>Across {shown.accounts.length} accounts</span>
@@ -722,12 +705,6 @@ function App() {
                             ? "Try a different name or account type."
                             : "Add cash, investments, property, or a liability to get started."}
                         </p>
-                        {!shown.accounts.length && (
-                          <button className="button" onClick={begin}>
-                            <Plus size={15} />
-                            Add account
-                          </button>
-                        )}
                       </div>
                     )}
                   </>
@@ -754,7 +731,6 @@ function App() {
                       </div>
                       <button
                         className="button primary"
-                        disabled={sample}
                         onClick={() => setModal(account)}
                       >
                         <Plus size={16} />
@@ -794,9 +770,9 @@ function App() {
                       data={shown}
                       money={money}
                       accountId={account.id}
-                      onEdit={sample ? undefined : (a) => setModal(a)}
+                      onEdit={(a) => setModal(a)}
                     />
-                    {!sample && (
+                    {
                       <div className="danger-zone">
                         <span>
                           Deleting this account also removes its balance
@@ -812,7 +788,7 @@ function App() {
                           Delete account
                         </button>
                       </div>
-                    )}
+                    }
                   </>
                 )}
                 {view === "History" && (
@@ -825,14 +801,6 @@ function App() {
                           The balance updates behind your financial picture.
                         </p>
                       </div>
-                      <button
-                        className="button"
-                        disabled={sample || !data.entries.length || busy}
-                        onClick={() => exportData("csv")}
-                      >
-                        <Download size={15} />
-                        Export CSV
-                      </button>
                     </div>
                     {shown.entries.length ? (
                       <HistoryList data={shown} money={money} />
@@ -844,10 +812,6 @@ function App() {
                           Start with an account. Each balance update will appear
                           here.
                         </p>
-                        <button className="button" onClick={begin}>
-                          <Plus size={15} />
-                          Add account
-                        </button>
                       </div>
                     )}
                   </>
@@ -875,7 +839,7 @@ function App() {
                           </div>
                           <select
                             aria-label="Reporting currency"
-                            disabled={!!data.accounts.length || sample || busy}
+                            disabled={!!data.accounts.length || busy}
                             value={data.baseCurrency}
                             onChange={(e) =>
                               run(async () => {
@@ -928,7 +892,7 @@ function App() {
                           </div>
                           <button
                             className="button"
-                            disabled={sample || busy}
+                            disabled={busy}
                             onClick={() => exportData("json")}
                           >
                             <Download size={15} />
@@ -945,7 +909,7 @@ function App() {
                           </div>
                           <button
                             className="button"
-                            disabled={sample || busy}
+                            disabled={busy}
                             onClick={() =>
                               run(async () => {
                                 const restored = await window.worth?.restore();
@@ -967,7 +931,7 @@ function App() {
                               Add dated balances using the Worth CSV format.{" "}
                               <button
                                 className="text-button"
-                                disabled={sample || busy}
+                                disabled={busy}
                                 onClick={() =>
                                   run(async () => {
                                     if (await window.worth?.export("template"))
@@ -981,7 +945,7 @@ function App() {
                           </div>
                           <button
                             className="button"
-                            disabled={sample || busy}
+                            disabled={busy}
                             onClick={() =>
                               run(async () => {
                                 const imported =
@@ -995,23 +959,6 @@ function App() {
                           >
                             <Upload size={15} />
                             Import CSV
-                          </button>
-                        </div>
-                        <div className="setting-row">
-                          <div>
-                            <strong>Export balance history</strong>
-                            <p>
-                              Take a readable copy of every balance to your
-                              spreadsheet.
-                            </p>
-                          </div>
-                          <button
-                            className="button"
-                            disabled={sample || busy || !data.entries.length}
-                            onClick={() => exportData("csv")}
-                          >
-                            <Download size={15} />
-                            Export CSV
                           </button>
                         </div>
                         <div className="setting-row">
@@ -1036,54 +983,12 @@ function App() {
                         </div>
                       </div>
                     </div>
-                    <div className="privacy-note">
-                      <ShieldCheck size={20} />
-                      <div>
-                        <strong>Personal by design.</strong>
-                        <p>
-                          No cloud sync, tracking, or bank connections. Worth
-                          stores data locally; database and backup files are not
-                          encrypted by the app. Currency conversions use the
-                          manual rate recorded with each balance.
-                        </p>
-                      </div>
-                    </div>
-                    <div className="settings-footer">
-                      <span className="brand-mark">
-                        w<span>·</span>
-                      </span>
-                      <span>
-                        Worth{" "}
-                        <small>
-                          Version 0.1.0 · Based on Codex Desktop by MangoWork
-                        </small>
-                      </span>
-                      <button
-                        className="text-button"
-                        onClick={() => {
-                          setSample(true);
-                          nav("Overview");
-                        }}
-                      >
-                        Explore sample workspace <ArrowRight size={14} />
-                      </button>
-                    </div>
                   </>
                 )}
               </>
             )}
           </div>
         </main>
-        <footer className="footer-status worth-footer">
-          <div className="footer-left">
-            <span>
-              <HardDrive className="footer-icon" size={15} />
-              Local
-            </span>
-            <span>{sample ? "Sample workspace" : "Stored on this Mac"}</span>
-          </div>
-          <span>{shown.baseCurrency}</span>
-        </footer>
       </section>
       {toast && (
         <div className="toast" role="status">
@@ -1246,133 +1151,132 @@ function Chart({
   const selected =
     hover === null ? null : points[Math.min(hover, points.length - 1)];
   return (
-    <div className="chart-wrap">
-      {hidden ? (
-        <div className="chart-private">
-          <EyeOff size={22} />
+    <div className={`chart-wrap ${hidden ? "balances-hidden" : ""}`}>
+      <div className="chart-plot" aria-hidden={hidden}>
+        <svg
+          viewBox={`0 0 ${W} ${H}`}
+          role="img"
+          aria-label={`Net worth history from ${dateLabel(start)} to ${dateLabel(end)}. Current net worth ${money(totals(data).net)}.`}
+          onMouseLeave={() => setHover(null)}
+          onMouseMove={(event) => {
+            const rect = event.currentTarget.getBoundingClientRect();
+            const px = ((event.clientX - rect.left) / rect.width) * W;
+            let idx = 0;
+            points.forEach((p, i) => {
+              if (x(p.date) <= px) idx = i;
+            });
+            setHover(idx);
+          }}
+        >
+          <defs>
+            <linearGradient id="chartFill" x1="0" y1="0" x2="0" y2="1">
+              <stop
+                offset="0%"
+                stopColor="var(--chart-line)"
+                stopOpacity=".16"
+              />
+              <stop
+                offset="100%"
+                stopColor="var(--chart-line)"
+                stopOpacity="0"
+              />
+            </linearGradient>
+          </defs>
+          {[0, 0.5, 1].map((t) => {
+            const v = min + (max - min) * t;
+            return (
+              <g key={t}>
+                <line
+                  className="chart-grid"
+                  x1={L}
+                  x2={R}
+                  y1={y(v)}
+                  y2={y(v)}
+                />
+                <text
+                  x={W}
+                  y={y(v) + 4}
+                  textAnchor="end"
+                  className="chart-label"
+                >
+                  {money(v)}
+                </text>
+              </g>
+            );
+          })}
+          <path
+            d={`${line} L ${lastX} ${B} L ${L} ${B} Z`}
+            fill="url(#chartFill)"
+          />
+          <path
+            d={line}
+            fill="none"
+            stroke="var(--chart-line)"
+            strokeWidth="2.3"
+            strokeLinejoin="round"
+          />
+          <circle
+            cx={lastX}
+            cy={y(points[points.length - 1].value)}
+            r="4"
+            fill="var(--chart-line)"
+            stroke="var(--bg)"
+            strokeWidth="2"
+          />
+          {selected && (
+            <>
+              <line
+                x1={x(selected.date)}
+                x2={x(selected.date)}
+                y1={T}
+                y2={B}
+                stroke="var(--muted)"
+                strokeDasharray="3 5"
+              />
+              <circle
+                cx={x(selected.date)}
+                cy={y(selected.value)}
+                r="4"
+                fill="var(--chart-line)"
+              />
+            </>
+          )}
+        </svg>
+        <div className="chart-dates">
+          {[0, 0.25, 0.5, 0.75, 1].map((t) => (
+            <span key={t}>
+              {dateLabel(
+                new Date(stamp(start) + duration * t)
+                  .toISOString()
+                  .slice(0, 10),
+                {
+                  month: "short",
+                  ...(duration < 90 * 86400000
+                    ? { day: "numeric" }
+                    : { year: "2-digit" }),
+                },
+              )}
+            </span>
+          ))}
+        </div>
+        {selected && (
+          <div className="chart-tooltip">
+            <span>
+              {dateLabel(selected.date, {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+              })}
+            </span>
+            <strong>{money(selected.value)}</strong>
+          </div>
+        )}
+      </div>
+      {hidden && (
+        <div className="chart-privacy-label">
+          <EyeOff size={16} />
           <span>Balances hidden</span>
         </div>
-      ) : (
-        <>
-          <svg
-            viewBox={`0 0 ${W} ${H}`}
-            role="img"
-            aria-label={`Net worth history from ${dateLabel(start)} to ${dateLabel(end)}. Current net worth ${money(totals(data).net)}.`}
-            onMouseLeave={() => setHover(null)}
-            onMouseMove={(event) => {
-              const rect = event.currentTarget.getBoundingClientRect();
-              const px = ((event.clientX - rect.left) / rect.width) * W;
-              let idx = 0;
-              points.forEach((p, i) => {
-                if (x(p.date) <= px) idx = i;
-              });
-              setHover(idx);
-            }}
-          >
-            <defs>
-              <linearGradient id="chartFill" x1="0" y1="0" x2="0" y2="1">
-                <stop
-                  offset="0%"
-                  stopColor="var(--chart-line)"
-                  stopOpacity=".16"
-                />
-                <stop
-                  offset="100%"
-                  stopColor="var(--chart-line)"
-                  stopOpacity="0"
-                />
-              </linearGradient>
-            </defs>
-            {[0, 0.5, 1].map((t) => {
-              const v = min + (max - min) * t;
-              return (
-                <g key={t}>
-                  <line
-                    className="chart-grid"
-                    x1={L}
-                    x2={R}
-                    y1={y(v)}
-                    y2={y(v)}
-                  />
-                  <text
-                    x={W}
-                    y={y(v) + 4}
-                    textAnchor="end"
-                    className="chart-label"
-                  >
-                    {money(v)}
-                  </text>
-                </g>
-              );
-            })}
-            <path
-              d={`${line} L ${lastX} ${B} L ${L} ${B} Z`}
-              fill="url(#chartFill)"
-            />
-            <path
-              d={line}
-              fill="none"
-              stroke="var(--chart-line)"
-              strokeWidth="2.3"
-              strokeLinejoin="round"
-            />
-            <circle
-              cx={lastX}
-              cy={y(points[points.length - 1].value)}
-              r="4"
-              fill="var(--chart-line)"
-              stroke="var(--bg)"
-              strokeWidth="2"
-            />
-            {selected && (
-              <>
-                <line
-                  x1={x(selected.date)}
-                  x2={x(selected.date)}
-                  y1={T}
-                  y2={B}
-                  stroke="var(--muted)"
-                  strokeDasharray="3 5"
-                />
-                <circle
-                  cx={x(selected.date)}
-                  cy={y(selected.value)}
-                  r="4"
-                  fill="var(--chart-line)"
-                />
-              </>
-            )}
-          </svg>
-          <div className="chart-dates">
-            {[0, 0.25, 0.5, 0.75, 1].map((t) => (
-              <span key={t}>
-                {dateLabel(
-                  new Date(stamp(start) + duration * t)
-                    .toISOString()
-                    .slice(0, 10),
-                  {
-                    month: "short",
-                    ...(duration < 90 * 86400000
-                      ? { day: "numeric" }
-                      : { year: "2-digit" }),
-                  },
-                )}
-              </span>
-            ))}
-          </div>
-          {selected && (
-            <div className="chart-tooltip">
-              <span>
-                {dateLabel(selected.date, {
-                  month: "short",
-                  day: "numeric",
-                  year: "numeric",
-                })}
-              </span>
-              <strong>{money(selected.value)}</strong>
-            </div>
-          )}
-        </>
       )}
     </div>
   );

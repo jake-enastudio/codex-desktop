@@ -12,9 +12,8 @@ The presentation follows the supplied official Codex screenshot: a centered 768p
 - Cash, investments, property, crypto, other assets, and debt accounts.
 - Add, update, backdate, and delete accounts. Updating an existing date replaces that day's balance.
 - Eight account currencies; manual conversion rates are stored with each dated balance.
-- Search and asset/liability filters, light/dark appearance, and a hide-balances control.
-- Local SQLite persistence, complete JSON backups/restores, and CSV import/export.
-- An isolated, read-only sample workspace. Sample data never enters your database.
+- Search and asset/liability filters, light/dark appearance, and a balance-visibility control beside the overview total.
+- Local SQLite persistence, complete JSON backups/restores, and CSV import.
 
 ## Run and package
 

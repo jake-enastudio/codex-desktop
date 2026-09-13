@@ -22,36 +22,28 @@ try {
   let page = await launch();
   await expect(page.getByText("Your whole picture starts here.")).toBeVisible();
   await page.screenshot({ path: resolve(".qa/welcome.png") });
-  await page
-    .getByRole("button", { name: "Explore a sample workspace", exact: true })
-    .click();
-  await expect(page.locator(".net-worth")).toContainText("$516,190");
-  await page.screenshot({ path: resolve(".qa/overview.png") });
-  await page
-    .getByRole("button", { name: "Hide balances", exact: true })
-    .click();
-  await expect(page.locator(".net-worth")).toContainText("••••••");
+  await expect(page.getByText("Personal", { exact: true })).toHaveCount(0);
+  await expect(page.locator(".worth-footer")).toHaveCount(0);
   await expect(
-    page.getByText("Balances hidden", { exact: true }),
-  ).toBeVisible();
-  await page
-    .getByRole("button", { name: "Show balances", exact: true })
-    .click();
+    page
+      .locator("main")
+      .getByRole("button", { name: "Add account", exact: true }),
+  ).toHaveCount(0);
   await page.getByRole("button", { name: "Settings", exact: true }).click();
-  await page.getByRole("button", { name: "Dark", exact: true }).click();
-  await page.getByRole("button", { name: "Overview", exact: true }).click();
-  await page.screenshot({ path: resolve(".qa/dark.png") });
-  await page
-    .getByRole("button", { name: "Exit preview", exact: false })
-    .click();
-  await expect(page.getByText("Your whole picture starts here.")).toBeVisible();
-  await page.getByRole("button", { name: "Settings", exact: true }).click();
-  await page.getByRole("button", { name: "Light", exact: true }).click();
+  await expect(
+    page.getByText("Personal by design.", { exact: true }),
+  ).toHaveCount(0);
+  await expect(page.getByRole("button", { name: /sample/i })).toHaveCount(0);
+  await expect(
+    page.getByRole("button", { name: "Export CSV", exact: true }),
+  ).toHaveCount(0);
+  await page.screenshot({
+    path: resolve(".qa/clean-settings.png"),
+    animations: "disabled",
+  });
   await page.getByLabel("Reporting currency").selectOption("AED");
   await page.getByRole("button", { name: "Overview", exact: true }).click();
-  await page
-    .getByRole("button", { name: "Add your first account", exact: true })
-    .click();
+  await page.getByRole("button", { name: "Add account", exact: true }).click();
   await page.getByLabel("Account name", { exact: true }).fill("QA Savings");
   await page.getByLabel("Balance", { exact: true }).fill("10000.25");
   await page.getByLabel("As of", { exact: true }).fill("2025-01-01");
@@ -62,6 +54,39 @@ try {
     .getByRole("button", { name: "Add account", exact: true })
     .click();
   await expect(page.locator(".net-worth")).toContainText("10,000");
+  const chartHeight = await page
+    .locator(".chart-wrap")
+    .evaluate((el) => el.getBoundingClientRect().height);
+  await page
+    .getByRole("button", { name: "Hide balances", exact: true })
+    .click();
+  await expect(page.locator(".net-worth")).toContainText("••••••");
+  await expect(
+    page.getByText("Balances hidden", { exact: true }),
+  ).toBeVisible();
+  expect(
+    await page
+      .locator(".chart-wrap")
+      .evaluate((el) => el.getBoundingClientRect().height),
+  ).toBe(chartHeight);
+  await expect(page.locator(".chart-plot")).toHaveCSS("visibility", "hidden");
+  await page.screenshot({
+    path: resolve(".qa/clean-hidden.png"),
+    animations: "disabled",
+  });
+  await page
+    .getByRole("button", { name: "Show balances", exact: true })
+    .click();
+  await expect(page.locator(".chart-plot")).toHaveCSS("visibility", "visible");
+  await page.screenshot({
+    path: resolve(".qa/clean-overview.png"),
+    animations: "disabled",
+  });
+  await expect(page.locator(".nav-block.top-actions")).toHaveCSS("gap", "0px");
+  await expect(
+    page.getByRole("button", { name: "Overview", exact: true }),
+  ).toHaveCSS("font-size", "12px");
+
   await page
     .getByRole("button", { name: "Add account", exact: true })
     .first()
@@ -96,7 +121,6 @@ try {
     "undefined",
   );
   const backupPath = resolve(qa, "test-backup.json"),
-    csvPath = resolve(qa, "test-export.csv"),
     importPath = resolve(qa, "test-import.csv");
   await page.getByRole("button", { name: "Settings", exact: true }).click();
   await app.evaluate(({ dialog }, filePath) => {
@@ -105,14 +129,6 @@ try {
   await page.getByRole("button", { name: "Save backup", exact: true }).click();
   await expect(page.getByRole("status")).toContainText("Backup saved");
   expect(JSON.parse(readFileSync(backupPath, "utf8"))).toEqual(stored);
-  await app.evaluate(({ dialog }, filePath) => {
-    dialog.showSaveDialog = async () => ({ canceled: false, filePath });
-  }, csvPath);
-  await page.getByRole("button", { name: "Export CSV", exact: true }).click();
-  await expect(page.getByRole("status")).toContainText(
-    "Balance history exported",
-  );
-  expect(readFileSync(csvPath, "utf8")).toContain("QA Savings");
   writeFileSync(
     importPath,
     "Account,Institution,Category,Currency,Date,Balance,Conversion rate,Reporting currency\nImported account,CSV,cash,USD,2025-03-01,100,3.67,AED",
@@ -160,7 +176,7 @@ try {
   await expect(page.locator(".account-row")).toHaveCount(1);
   expect(errors).toEqual([]);
   console.log(
-    "PASS: sample isolation, privacy, dark mode, account creation, liabilities, dated updates, SQLite persistence across restart, search, account deletion, JSON backup/restore, CSV export/import, no Codex bridge.",
+    "PASS: compact sidebar, removed actions, stable balance privacy, account creation, liabilities, dated updates, SQLite persistence across restart, search, account deletion, JSON backup/restore, CSV import, no Codex bridge.",
   );
   await app.close();
 } catch (e) {
