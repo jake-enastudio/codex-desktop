@@ -5,3 +5,6 @@ release/
 *.log
 .env
 *.tsbuildinfo
+
+.qa/
+test-results/

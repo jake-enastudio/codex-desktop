@@ -7,7 +7,7 @@ const rendererUrl = `http://${host}:${port}`;
 const children = [];
 let shuttingDown = false;
 
-console.log(`Starting Codex Desktop dev server on ${rendererUrl}`);
+console.log(`Starting Worth dev server on ${rendererUrl}`);
 
 const tsc = start('tsc', ['-p', 'tsconfig.electron.json', '--watch', '--preserveWatchOutput'], { label: 'tsc' });
 const vite = start('vite', ['--host', host, '--port', String(port)], { label: 'vite' });

@@ -10,7 +10,8 @@
       "node",
       "vitest/globals"
     ],
-    "noEmit": true
+    "noEmit": true,
+    "allowJs": true
   },
   "include": [
     "tests/**/*.ts",
@@ -35,6 +36,7 @@
     "src/renderer/projectStateStorage.ts",
     "src/renderer/projects.ts",
     "src/main/processEnv.ts",
-    "src/main/codexHistory.ts"
+    "src/main/codexHistory.ts",
+    "src/main/**/*.mjs"
   ]
 }

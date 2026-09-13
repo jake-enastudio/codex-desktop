@@ -1,5 +1,5 @@
-const appId = process.env.APP_ID || 'com.mangowork.codexdesktop';
-const productName = process.env.PRODUCT_NAME || 'Codex Desktop';
+const appId = process.env.APP_ID || 'personal.worth.desktop';
+const productName = process.env.PRODUCT_NAME || 'Worth';
 const hasWindowsSigning = Boolean(
   process.env.WIN_CSC_LINK ||
   process.env.CSC_LINK ||
@@ -29,11 +29,13 @@ module.exports = {
   npmRebuild: false,
   publish: null,
   mac: {
-    category: 'public.app-category.developer-tools',
+    category: 'public.app-category.finance',
     hardenedRuntime: true,
     gatekeeperAssess: false,
     minimumSystemVersion: '11.0',
-    notarize: true,
+    notarize: false,
+    identity: null,
+    icon: 'assets/Worth.icns',
     target: [
       {
         target: 'dmg',

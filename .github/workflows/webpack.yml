@@ -1,4 +1,4 @@
-name: Build Codex Desktop
+name: Build Worth
 
 on:
   push:
@@ -19,12 +19,13 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
           cache: npm
 
-      - run: npm install
+      - run: npm ci
       - run: npm run typecheck
       - run: npm test
+      - run: npm run test:worth
       - run: npm run build
 
   package-mac:
@@ -37,15 +38,15 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
           cache: npm
 
-      - run: npm install
+      - run: npm ci
       - run: npm run package:mac
 
       - uses: actions/upload-artifact@v4
         with:
-          name: codex-desktop-mac
+          name: worth-mac
           if-no-files-found: error
           path: |
             release/*.dmg
@@ -62,15 +63,15 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
           cache: npm
 
-      - run: npm install
+      - run: npm ci
       - run: npm run package:win
 
       - uses: actions/upload-artifact@v4
         with:
-          name: codex-desktop-windows
+          name: worth-windows
           if-no-files-found: error
           path: |
             release/*.exe
