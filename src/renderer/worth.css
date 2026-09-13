@@ -23,17 +23,17 @@
 :root[data-theme="dark"] {
   color-scheme: dark;
   --bg: #111111;
-  --sidebar: #202120;
-  --panel: #181818;
+  --sidebar: #212121;
+  --panel: #1b1b1b;
   --text: #ededed;
-  --muted: #8d8d91;
-  --secondary: #a6a6a9;
-  --border: #2a2a2a;
+  --muted: #888888;
+  --secondary: #a1a1a1;
+  --border: #2c2c2c;
   --hover: #252525;
   --active: #303030;
   --button: #ededed;
   --button-text: #181818;
-  --chart-line: #a0b396;
+  --chart-line: #dddddd;
   --green: #adc39d;
   --input: #1a1a1a;
   --shadow: 0 24px 90px #0008;
@@ -107,7 +107,7 @@ p {
 }
 
 button:active:not(:disabled) {
-  transform: translateY(0.5px);
+  transform: none;
 }
 
 .icon-button {
@@ -1322,11 +1322,11 @@ dialog label small {
   margin-left: auto;
 }
 .worth-workspace .worth-content {
-  margin: 0 auto;
+  margin: 0;
   width: 100%;
-  max-width: 1280px;
+  max-width: none;
   min-height: 0;
-  padding: 36px 42px 30px;
+  padding: 0;
   display: block;
   overflow: auto;
 }
@@ -1360,7 +1360,7 @@ dialog label small {
   --muted: #858585;
 }
 :root[data-theme="light"] .sidebar {
-  background: linear-gradient(180deg, #eeeeec, #e7eae5);
+  background: var(--sidebar);
   border-color: var(--border);
 }
 :root[data-theme="light"]
@@ -1369,18 +1369,18 @@ dialog label small {
 }
 :root[data-theme="light"]
   :is(.ghost-button.active, .thread-item.active-thread, .settings.active) {
-  background: #dadcd6;
+  background: var(--active);
 }
 :root[data-theme="light"]
   :is(.ghost-button, .thread-item, .settings, .add-project):hover {
-  background: #dfe1da;
+  background: var(--hover);
 }
 @media (max-width: 1100px) {
   .worth-shell {
     grid-template-columns: 225px minmax(0, 1fr);
   }
-  .worth-workspace .worth-content {
-    padding: 30px 28px;
+  .worth-page {
+    padding-inline: 24px;
   }
   .net-worth {
     font-size: 42px;
@@ -1400,4 +1400,346 @@ dialog label small {
 .worth-account-group .project-pill {
   width: 100%;
   text-align: left;
+}
+
+/* Official Codex screenshot reference: centered 768px content, neutral chrome,
+   regular-weight navigation, and softly bordered grouped surfaces. */
+.worth-shell {
+  grid-template-columns: 266px minmax(0, 1fr);
+}
+.worth-shell > .sidebar {
+  background: var(--sidebar);
+  border-right: 1px solid var(--border);
+  gap: 18px;
+}
+.worth-page {
+  width: 100%;
+  max-width: 832px;
+  margin-inline: auto;
+  padding: 24px 32px 48px;
+}
+.worth-shell :is(.ghost-button, .add-project, .settings) {
+  min-height: 34px;
+  padding: 7px 10px;
+  font-size: 14px;
+  font-weight: 400;
+  border-radius: 9px;
+  color: var(--text);
+}
+.worth-shell :is(.ghost-button, .add-project, .settings, .thread-item):hover {
+  background: var(--hover);
+}
+.worth-shell
+  :is(.ghost-button.active, .settings.active, .thread-item.active-thread) {
+  background: var(--active);
+}
+.worth-shell .section-title {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--muted);
+}
+.worth-shell .project-pill strong {
+  font-size: 13px;
+  font-weight: 500;
+}
+.worth-shell .thread-item {
+  font-size: 13px;
+  font-weight: 400;
+  min-height: 34px;
+}
+.worth-shell .project-pill:hover {
+  background: var(--hover);
+}
+.worth-brand {
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: -0.3px;
+}
+.worth-account-group {
+  margin-bottom: 8px;
+}
+.worth-workspace .topbar {
+  border-bottom: 0;
+}
+.breadcrumb {
+  font-size: 12px;
+}
+.currency-label,
+.sample-pill {
+  font-size: 11px;
+}
+.page-heading {
+  margin-bottom: 44px;
+  align-items: flex-start;
+}
+.page-heading .eyebrow {
+  display: none;
+}
+.page-heading h1 {
+  font-size: 24px;
+  font-weight: 400;
+  letter-spacing: -0.5px;
+  margin-bottom: 10px;
+}
+.page-heading p {
+  font-size: 14px;
+  line-height: 1.6;
+}
+.page-heading > .button {
+  align-self: center;
+}
+.button {
+  font-size: 13px;
+  font-weight: 400;
+  border-radius: 9px;
+  min-height: 32px;
+  padding: 6px 10px;
+  background: var(--hover);
+}
+.button.primary {
+  font-weight: 500;
+}
+.text-button {
+  font-size: 12px;
+}
+.icon-button {
+  border-radius: 7px;
+}
+.section-label,
+.summary-label {
+  font-size: 13px;
+}
+.net-worth {
+  font-size: 44px;
+  font-weight: 450;
+  letter-spacing: -1.5px;
+}
+.change {
+  font-size: 12px;
+}
+.ranges button {
+  font-size: 11px;
+}
+.wealth-foot {
+  font-size: 10px;
+  line-height: 1.5;
+}
+.chart-label {
+  font-size: 12px;
+}
+.chart-dates {
+  font-size: 10px;
+}
+.summary-grid {
+  border: 0;
+  padding: 0;
+  gap: 12px;
+  grid-template-columns: 1fr 1fr 1.4fr;
+}
+.summary-item {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--panel);
+  padding: 18px;
+}
+.summary-item + .summary-item {
+  border: 1px solid var(--border);
+  padding-left: 18px;
+}
+.summary-item > strong {
+  font-size: 23px;
+}
+.summary-item > small {
+  font-size: 11px;
+}
+.allocation-legend,
+.allocation-legend small {
+  font-size: 9px;
+}
+.accounts-section {
+  margin-top: 38px;
+}
+.section-heading h2 {
+  font-size: 14px;
+  font-weight: 500;
+}
+.account-table {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--panel);
+  padding: 0 16px;
+  overflow: hidden;
+}
+.table-head {
+  padding-top: 15px;
+  font-size: 11px;
+}
+.account-row {
+  min-height: 72px;
+}
+.account-row:last-child {
+  border-bottom: 0;
+}
+.account-identity strong {
+  font-size: 13px;
+  font-weight: 450;
+}
+.account-identity small {
+  font-size: 11px;
+}
+.type-tag {
+  font-size: 11px;
+}
+.row-balance {
+  font-size: 13px;
+}
+.muted {
+  font-size: 11px;
+}
+.history-list {
+  border: 1px solid var(--border);
+  background: var(--panel);
+  border-radius: 16px;
+  padding: 0 16px;
+}
+.history-row:last-child {
+  border-bottom: 0;
+}
+.history-row strong {
+  font-size: 13px;
+  font-weight: 450;
+}
+.history-row small,
+.history-date {
+  font-size: 11px;
+}
+.settings-group {
+  margin-bottom: 40px;
+}
+.settings-group > h2 {
+  font-size: 14px;
+  font-weight: 500;
+  border: 0;
+  padding: 0;
+  margin-bottom: 16px;
+}
+.settings-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 0 16px;
+  overflow: hidden;
+}
+.setting-row {
+  padding: 16px 0;
+  gap: 24px;
+}
+.setting-row:last-child {
+  border-bottom: 0;
+}
+.setting-row strong {
+  font-size: 14px;
+  font-weight: 450;
+}
+.setting-row p {
+  font-size: 13px;
+  line-height: 1.5;
+  margin-top: 4px;
+  max-width: 440px;
+}
+.setting-row select {
+  font-size: 13px;
+  border-radius: 9px;
+  background: var(--hover);
+}
+.setting-row .text-button {
+  font-size: 13px;
+  color: #65a4d9;
+}
+.theme-tabs {
+  background: var(--hover);
+  border-radius: 9px;
+}
+.theme-tabs button {
+  font-size: 12px;
+  border-radius: 7px;
+}
+.privacy-note {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px;
+}
+.privacy-note strong {
+  font-size: 13px;
+  font-weight: 450;
+}
+.privacy-note p {
+  font-size: 12px;
+  line-height: 1.6;
+}
+.settings-footer .brand-mark {
+  display: none;
+}
+.welcome-card {
+  background: var(--panel);
+  border-radius: 16px;
+}
+.welcome-card h2 {
+  font-size: 24px;
+}
+.welcome-card p {
+  font-size: 14px;
+}
+.start-grid p {
+  font-size: 12px;
+}
+.start-grid h3 {
+  font-size: 13px;
+}
+.sample-banner {
+  font-size: 12px;
+  background: var(--panel);
+  border-radius: 10px;
+}
+.sample-banner button {
+  font-size: 11px;
+}
+dialog {
+  border-radius: 16px;
+  background: var(--panel);
+}
+dialog label {
+  font-size: 13px;
+}
+dialog input,
+dialog select {
+  font-size: 13px;
+  border-radius: 9px;
+}
+:root[data-theme="light"] {
+  --sidebar: #f0f0f0;
+  --panel: #ffffff;
+  --border: #e2e2e2;
+  --muted: #858585;
+  --secondary: #707070;
+  --hover: #e8e8e8;
+  --active: #dedede;
+  --button: #252525;
+  --input: #fafafa;
+}
+@media (max-width: 1100px) {
+  .worth-shell {
+    grid-template-columns: 230px minmax(0, 1fr);
+  }
+  .worth-page {
+    padding-inline: 24px;
+  }
+  .summary-item,
+  .summary-item + .summary-item {
+    padding: 14px;
+  }
+  .account-table {
+    padding: 0 10px;
+  }
 }

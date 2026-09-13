@@ -4,6 +4,8 @@ A personal net worth tracker for macOS, built as a fork of [Codex Desktop by Man
 
 Worth keeps the upstream Electron window configuration, React/Vite project structure, dark sidebar, project/thread navigation styles, and packaging tools. Accounts replace the project/thread list. The active application has no chat, Codex CLI, model selection, skills, or Git operations. The original coding modules remain in the repository for upstream comparison, but the Worth entry point does not register or invoke them.
 
+The presentation follows the supplied official Codex screenshot: a centered 768px content column, neutral dark sidebar, regular-weight navigation, and grouped cards. These are explicit Worth overrides in `src/renderer/worth.css`; the upstream stylesheet remains available unchanged.
+
 ## What works
 
 - Overview with assets, liabilities, net worth, allocation, and dated history.

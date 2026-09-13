@@ -398,666 +398,681 @@ function App() {
           </div>
         </header>
         <main className="content worth-content">
-          {sample && (
-            <div className="sample-banner">
-              <span>
-                You’re exploring a sample workspace. Your data is unchanged.
-              </span>
-              <button
-                onClick={() => {
-                  setSample(false);
-                  setDetail(null);
-                }}
-              >
-                Exit preview <X size={14} />
-              </button>
-            </div>
-          )}
-          {error && (
-            <div role="alert" className="error-banner">
-              <span>{error}</span>
-              <button
-                className="icon-button"
-                aria-label="Dismiss error"
-                onClick={() => setError("")}
-              >
-                <X size={16} />
-              </button>
-            </div>
-          )}
-          {!loaded ? (
-            <div className="loading">Opening your workspace…</div>
-          ) : (
-            <>
-              {view === "Overview" && (
-                <>
-                  <div className="page-heading">
-                    <div>
-                      <div className="eyebrow">YOUR FINANCIAL PICTURE</div>
-                      <h1>Overview</h1>
-                      <p>Everything you own. Everything you owe. One place.</p>
-                    </div>
-                    <button className="button primary" onClick={begin}>
-                      <Plus size={16} />
-                      Add account
-                    </button>
-                  </div>
-                  {shown.accounts.length === 0 ? (
-                    <>
-                      <section className="welcome-card">
-                        <div className="welcome-art">
-                          <span />
-                          <span />
-                          <span />
-                          <Wallet size={28} />
-                        </div>
-                        <div className="eyebrow">A CLEARER START</div>
-                        <h2>Your whole picture starts here.</h2>
+          <div className="worth-page">
+            {sample && (
+              <div className="sample-banner">
+                <span>
+                  You’re exploring a sample workspace. Your data is unchanged.
+                </span>
+                <button
+                  onClick={() => {
+                    setSample(false);
+                    setDetail(null);
+                  }}
+                >
+                  Exit preview <X size={14} />
+                </button>
+              </div>
+            )}
+            {error && (
+              <div role="alert" className="error-banner">
+                <span>{error}</span>
+                <button
+                  className="icon-button"
+                  aria-label="Dismiss error"
+                  onClick={() => setError("")}
+                >
+                  <X size={16} />
+                </button>
+              </div>
+            )}
+            {!loaded ? (
+              <div className="loading">Opening your workspace…</div>
+            ) : (
+              <>
+                {view === "Overview" && (
+                  <>
+                    <div className="page-heading">
+                      <div>
+                        <div className="eyebrow">YOUR FINANCIAL PICTURE</div>
+                        <h1>Overview</h1>
                         <p>
-                          Add your first account to see where you stand.
-                          <br />
-                          Build a history, one balance update at a time.
+                          Everything you own. Everything you owe. One place.
                         </p>
-                        <button className="button primary" onClick={begin}>
-                          <Plus size={16} />
-                          Add your first account
-                        </button>
-                        <button
-                          className="text-button"
-                          onClick={() => setSample(true)}
-                        >
-                          Explore a sample workspace <ArrowRight size={14} />
-                        </button>
-                        <div className="welcome-trust">
-                          <HardDrive size={14} />
-                          Local to your Mac<span>·</span>No bank connection
-                          required
-                        </div>
-                      </section>
-                      <div className="start-grid">
-                        {[
-                          [
-                            Landmark,
-                            "Gather your accounts",
-                            "Cash, investments, property, and debt.",
-                          ],
-                          [
-                            History,
-                            "Keep a little history",
-                            "Update balances whenever it suits you.",
-                          ],
-                          [
-                            ShieldCheck,
-                            "Keep it personal",
-                            "Your records stay in your local workspace.",
-                          ],
-                        ].map(([Icon, title, body]: any) => (
-                          <div key={title}>
-                            <Icon size={19} />
-                            <h3>{title}</h3>
-                            <p>{body}</p>
-                          </div>
-                        ))}
                       </div>
-                    </>
-                  ) : (
-                    <>
-                      <section className="wealth-section">
-                        <div className="wealth-top">
-                          <div>
-                            <div className="section-label">
-                              Total net worth <span className="subtle-dot" />
-                            </div>
-                            <div className="net-worth">
-                              {money(total.net)}
-                              <span>{shown.baseCurrency}</span>
-                            </div>
-                            <div
-                              className={`change ${change < 0 ? "negative" : ""}`}
-                            >
-                              {change < 0 ? (
-                                <ArrowDownLeft size={15} />
-                              ) : (
-                                <ArrowUpRight size={15} />
-                              )}
-                              <strong>
-                                {change >= 0 ? "+" : "−"}
-                                {money(Math.abs(change))}
-                                {percent !== null && !privateMode
-                                  ? ` (${Math.abs(percent).toFixed(1)}%)`
-                                  : ""}
-                              </strong>
-                              <span>since {dateLabel(chartStart)}</span>
-                            </div>
-                          </div>
-                          <div className="ranges">
-                            {["1M", "3M", "YTD", "1Y", "ALL"].map((r) => (
-                              <button
-                                key={r}
-                                onClick={() => setRange(r)}
-                                className={range === r ? "selected" : ""}
-                              >
-                                {r}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-                        <Chart
-                          data={shown}
-                          start={chartStart}
-                          money={money}
-                          hidden={privateMode}
-                        />
-                        <div className="wealth-foot">
-                          <span>
-                            <i />
-                            Recorded balances · carried forward between updates
-                          </span>
-                          <span>
-                            As of{" "}
-                            {dateLabel(today(), {
-                              month: "short",
-                              day: "numeric",
-                              year: "numeric",
-                            })}
-                          </span>
-                        </div>
-                      </section>
-                      <div className="summary-grid">
-                        <section className="summary-item">
-                          <div className="summary-label">
-                            <span className="mini-icon asset">
-                              <ArrowUpRight size={16} />
-                            </span>
-                            Total assets
-                          </div>
-                          <strong>{money(total.assets)}</strong>
-                          <small>
-                            {
-                              shown.accounts.filter(
-                                (a) => a.category !== "debt",
-                              ).length
-                            }{" "}
-                            asset accounts
-                          </small>
-                        </section>
-                        <section className="summary-item">
-                          <div className="summary-label">
-                            <span className="mini-icon liability">
-                              <ArrowDownLeft size={16} />
-                            </span>
-                            Total liabilities
-                          </div>
-                          <strong>{money(total.debt)}</strong>
-                          <small>
-                            {
-                              shown.accounts.filter(
-                                (a) => a.category === "debt",
-                              ).length
-                            }{" "}
-                            liability accounts
-                          </small>
-                        </section>
-                        <section className="summary-item allocation">
-                          <div className="summary-label">Asset allocation</div>
-                          <div className="allocation-bar">
-                            {assetGroups.map((g) => (
-                              <span
-                                key={g.key}
-                                style={{
-                                  width: `${(g.amount / total.assets) * 100}%`,
-                                  background: g.color,
-                                }}
-                                title={
-                                  privateMode
-                                    ? g.name
-                                    : `${g.name}: ${Math.round((g.amount / total.assets) * 100)}%`
-                                }
-                              />
-                            ))}
-                          </div>
-                          <div className="allocation-legend">
-                            {assetGroups.map((g) => (
-                              <span key={g.key}>
-                                <i style={{ background: g.color }} />
-                                {g.name}
-                                {!privateMode && (
-                                  <small>
-                                    {Math.round(
-                                      (g.amount / total.assets) * 100,
-                                    )}
-                                    %
-                                  </small>
-                                )}
-                              </span>
-                            ))}
-                            {assetGroups.length === 0 && (
-                              <span>No asset balances yet</span>
-                            )}
-                          </div>
-                        </section>
-                      </div>
-                      <section className="accounts-section">
-                        <div className="section-heading">
-                          <h2>
-                            Your accounts <span>{shown.accounts.length}</span>
-                          </h2>
-                          <button
-                            className="text-button"
-                            onClick={() => nav("Accounts")}
-                          >
-                            View all accounts <ArrowRight size={14} />
-                          </button>
-                        </div>
-                        {table(shown.accounts.slice(0, 5))}
-                      </section>
-                    </>
-                  )}
-                </>
-              )}
-              {view === "Accounts" && !account && (
-                <>
-                  <div className="page-heading">
-                    <div>
-                      <div className="eyebrow">THE BUILDING BLOCKS</div>
-                      <h1>Accounts</h1>
-                      <p>A home for every part of your net worth.</p>
-                    </div>
-                    <button className="button primary" onClick={begin}>
-                      <Plus size={16} />
-                      Add account
-                    </button>
-                  </div>
-                  <div className="accounts-total">
-                    <span>Across {shown.accounts.length} accounts</span>
-                    <strong>
-                      {money(total.net)}
-                      <small>net worth</small>
-                    </strong>
-                  </div>
-                  <div className="table-toolbar">
-                    <div className="tabs">
-                      {[
-                        ["all", "All accounts"],
-                        ["assets", "Assets"],
-                        ["debt", "Liabilities"],
-                      ].map(([key, title]) => (
-                        <button
-                          key={key}
-                          onClick={() => setFilter(key)}
-                          className={filter === key ? "selected" : ""}
-                        >
-                          {title}
-                        </button>
-                      ))}
-                    </div>
-                    <label className="search">
-                      <Search size={15} />
-                      <input
-                        aria-label="Search accounts"
-                        placeholder="Search accounts…"
-                        value={query}
-                        onChange={(e) => setQuery(e.target.value)}
-                      />
-                    </label>
-                  </div>
-                  {filtered.length ? (
-                    table(filtered)
-                  ) : (
-                    <div className="empty-state">
-                      <Wallet size={25} />
-                      <h2>
-                        {shown.accounts.length
-                          ? "No matching accounts"
-                          : "Room for your whole picture"}
-                      </h2>
-                      <p>
-                        {shown.accounts.length
-                          ? "Try a different name or account type."
-                          : "Add cash, investments, property, or a liability to get started."}
-                      </p>
-                      {!shown.accounts.length && (
-                        <button className="button" onClick={begin}>
-                          <Plus size={15} />
-                          Add account
-                        </button>
-                      )}
-                    </div>
-                  )}
-                </>
-              )}
-              {view === "Accounts" && account && (
-                <>
-                  <button
-                    className="text-button back"
-                    onClick={() => setDetail(null)}
-                  >
-                    <ArrowLeft size={14} />
-                    All accounts
-                  </button>
-                  <div className="page-heading">
-                    <div>
-                      <div className="eyebrow">
-                        {groups[account.category].label.toUpperCase()}
-                      </div>
-                      <h1>{account.name}</h1>
-                      <p>
-                        {account.institution || "Personal account"} ·{" "}
-                        {account.currency}
-                      </p>
-                    </div>
-                    <button
-                      className="button primary"
-                      disabled={sample}
-                      onClick={() => setModal(account)}
-                    >
-                      <Plus size={16} />
-                      Update balance
-                    </button>
-                  </div>
-                  <section className="detail-balance">
-                    <div className="section-label">
-                      {account.category === "debt"
-                        ? "Outstanding balance"
-                        : "Current balance"}
-                    </div>
-                    <div className="net-worth">
-                      {money(
-                        (latest(shown, account.id)?.amountMinor || 0) / 100,
-                        account.currency,
-                        true,
-                      )}
-                      <span>{account.currency}</span>
-                    </div>
-                    <p className="muted">
-                      Last updated{" "}
-                      {dateLabel(latest(shown, account.id)?.date || today(), {
-                        month: "long",
-                        day: "numeric",
-                        year: "numeric",
-                      })}
-                      {account.currency !== shown.baseCurrency &&
-                        ` · ${money(value(latest(shown, account.id)))} in ${shown.baseCurrency}`}
-                    </p>
-                  </section>
-                  <div className="section-heading">
-                    <h2>Balance history</h2>
-                    <span className="muted">One balance per day</span>
-                  </div>
-                  <HistoryList
-                    data={shown}
-                    money={money}
-                    accountId={account.id}
-                    onEdit={sample ? undefined : (a) => setModal(a)}
-                  />
-                  {!sample && (
-                    <div className="danger-zone">
-                      <span>
-                        Deleting this account also removes its balance history.
-                      </span>
-                      <button
-                        className="text-button danger"
-                        onClick={() =>
-                          setModal({ ...account, id: "delete:" + account.id })
-                        }
-                      >
-                        <Trash2 size={14} />
-                        Delete account
-                      </button>
-                    </div>
-                  )}
-                </>
-              )}
-              {view === "History" && (
-                <>
-                  <div className="page-heading">
-                    <div>
-                      <div className="eyebrow">ONE UPDATE AT A TIME</div>
-                      <h1>History</h1>
-                      <p>The balance updates behind your financial picture.</p>
-                    </div>
-                    <button
-                      className="button"
-                      disabled={sample || !data.entries.length || busy}
-                      onClick={() => exportData("csv")}
-                    >
-                      <Download size={15} />
-                      Export CSV
-                    </button>
-                  </div>
-                  {shown.entries.length ? (
-                    <HistoryList data={shown} money={money} />
-                  ) : (
-                    <div className="empty-state">
-                      <History size={25} />
-                      <h2>Your history is ahead of you</h2>
-                      <p>
-                        Start with an account. Each balance update will appear
-                        here.
-                      </p>
-                      <button className="button" onClick={begin}>
-                        <Plus size={15} />
+                      <button className="button primary" onClick={begin}>
+                        <Plus size={16} />
                         Add account
                       </button>
                     </div>
-                  )}
-                </>
-              )}
-              {view === "Settings" && (
-                <>
-                  <div className="page-heading">
-                    <div>
-                      <div className="eyebrow">MAKE YOURSELF AT HOME</div>
-                      <h1>Settings</h1>
-                      <p>Your workspace, your preferences.</p>
-                    </div>
-                  </div>
-                  <div className="settings-group">
-                    <h2>Workspace</h2>
-                    <div className="setting-row">
-                      <div>
-                        <strong>Reporting currency</strong>
-                        <p>
-                          {data.accounts.length
-                            ? "Fixed for this workspace to preserve historical conversions."
-                            : "Choose your reporting currency before adding your first account."}
-                        </p>
-                      </div>
-                      <select
-                        aria-label="Reporting currency"
-                        disabled={!!data.accounts.length || sample || busy}
-                        value={data.baseCurrency}
-                        onChange={(e) =>
-                          run(async () => {
-                            setData(
-                              await window.worth!.currency(e.target.value),
-                            );
-                            setToast("Reporting currency updated");
-                          })
-                        }
-                      >
-                        {currencies.map((c) => (
-                          <option key={c}>{c}</option>
-                        ))}
-                      </select>
-                    </div>
-                    <div className="setting-row">
-                      <div>
-                        <strong>Appearance</strong>
-                        <p>A light or dark space for your numbers.</p>
-                      </div>
-                      <div className="tabs theme-tabs">
-                        <button
-                          className={theme === "light" ? "selected" : ""}
-                          onClick={() => setTheme("light")}
-                        >
-                          <Sun size={15} />
-                          Light
-                        </button>
-                        <button
-                          className={theme === "dark" ? "selected" : ""}
-                          onClick={() => setTheme("dark")}
-                        >
-                          <Moon size={15} />
-                          Dark
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="settings-group">
-                    <h2>Your data</h2>
-                    <div className="setting-row">
-                      <div>
-                        <strong>Back up your workspace</strong>
-                        <p>
-                          Save all accounts, balances, and currency settings as
-                          a JSON file.
-                        </p>
-                      </div>
-                      <button
-                        className="button"
-                        disabled={sample || busy}
-                        onClick={() => exportData("json")}
-                      >
-                        <Download size={15} />
-                        Save backup
-                      </button>
-                    </div>
-                    <div className="setting-row">
-                      <div>
-                        <strong>Restore a backup</strong>
-                        <p>
-                          Replace this workspace with a previously saved Worth
-                          backup.
-                        </p>
-                      </div>
-                      <button
-                        className="button"
-                        disabled={sample || busy}
-                        onClick={() =>
-                          run(async () => {
-                            const restored = await window.worth?.restore();
-                            if (restored) {
-                              setData(restored);
-                              setToast("Workspace restored");
-                            }
-                          })
-                        }
-                      >
-                        <Upload size={15} />
-                        Restore
-                      </button>
-                    </div>
-                    <div className="setting-row">
-                      <div>
-                        <strong>Import from a spreadsheet</strong>
-                        <p>
-                          Add dated balances using the Worth CSV format.{" "}
+                    {shown.accounts.length === 0 ? (
+                      <>
+                        <section className="welcome-card">
+                          <div className="welcome-art">
+                            <span />
+                            <span />
+                            <span />
+                            <Wallet size={28} />
+                          </div>
+                          <div className="eyebrow">A CLEARER START</div>
+                          <h2>Your whole picture starts here.</h2>
+                          <p>
+                            Add your first account to see where you stand.
+                            <br />
+                            Build a history, one balance update at a time.
+                          </p>
+                          <button className="button primary" onClick={begin}>
+                            <Plus size={16} />
+                            Add your first account
+                          </button>
                           <button
                             className="text-button"
-                            disabled={sample || busy}
-                            onClick={() =>
-                              run(async () => {
-                                if (await window.worth?.export("template"))
-                                  setToast("CSV template saved");
-                              })
-                            }
+                            onClick={() => setSample(true)}
                           >
-                            Download template
+                            Explore a sample workspace <ArrowRight size={14} />
                           </button>
-                        </p>
+                          <div className="welcome-trust">
+                            <HardDrive size={14} />
+                            Local to your Mac<span>·</span>No bank connection
+                            required
+                          </div>
+                        </section>
+                        <div className="start-grid">
+                          {[
+                            [
+                              Landmark,
+                              "Gather your accounts",
+                              "Cash, investments, property, and debt.",
+                            ],
+                            [
+                              History,
+                              "Keep a little history",
+                              "Update balances whenever it suits you.",
+                            ],
+                            [
+                              ShieldCheck,
+                              "Keep it personal",
+                              "Your records stay in your local workspace.",
+                            ],
+                          ].map(([Icon, title, body]: any) => (
+                            <div key={title}>
+                              <Icon size={19} />
+                              <h3>{title}</h3>
+                              <p>{body}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <section className="wealth-section">
+                          <div className="wealth-top">
+                            <div>
+                              <div className="section-label">
+                                Total net worth <span className="subtle-dot" />
+                              </div>
+                              <div className="net-worth">
+                                {money(total.net)}
+                                <span>{shown.baseCurrency}</span>
+                              </div>
+                              <div
+                                className={`change ${change < 0 ? "negative" : ""}`}
+                              >
+                                {change < 0 ? (
+                                  <ArrowDownLeft size={15} />
+                                ) : (
+                                  <ArrowUpRight size={15} />
+                                )}
+                                <strong>
+                                  {change >= 0 ? "+" : "−"}
+                                  {money(Math.abs(change))}
+                                  {percent !== null && !privateMode
+                                    ? ` (${Math.abs(percent).toFixed(1)}%)`
+                                    : ""}
+                                </strong>
+                                <span>since {dateLabel(chartStart)}</span>
+                              </div>
+                            </div>
+                            <div className="ranges">
+                              {["1M", "3M", "YTD", "1Y", "ALL"].map((r) => (
+                                <button
+                                  key={r}
+                                  onClick={() => setRange(r)}
+                                  className={range === r ? "selected" : ""}
+                                >
+                                  {r}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                          <Chart
+                            data={shown}
+                            start={chartStart}
+                            money={money}
+                            hidden={privateMode}
+                          />
+                          <div className="wealth-foot">
+                            <span>
+                              <i />
+                              Recorded balances · carried forward between
+                              updates
+                            </span>
+                            <span>
+                              As of{" "}
+                              {dateLabel(today(), {
+                                month: "short",
+                                day: "numeric",
+                                year: "numeric",
+                              })}
+                            </span>
+                          </div>
+                        </section>
+                        <div className="summary-grid">
+                          <section className="summary-item">
+                            <div className="summary-label">
+                              <span className="mini-icon asset">
+                                <ArrowUpRight size={16} />
+                              </span>
+                              Total assets
+                            </div>
+                            <strong>{money(total.assets)}</strong>
+                            <small>
+                              {
+                                shown.accounts.filter(
+                                  (a) => a.category !== "debt",
+                                ).length
+                              }{" "}
+                              asset accounts
+                            </small>
+                          </section>
+                          <section className="summary-item">
+                            <div className="summary-label">
+                              <span className="mini-icon liability">
+                                <ArrowDownLeft size={16} />
+                              </span>
+                              Total liabilities
+                            </div>
+                            <strong>{money(total.debt)}</strong>
+                            <small>
+                              {
+                                shown.accounts.filter(
+                                  (a) => a.category === "debt",
+                                ).length
+                              }{" "}
+                              liability accounts
+                            </small>
+                          </section>
+                          <section className="summary-item allocation">
+                            <div className="summary-label">
+                              Asset allocation
+                            </div>
+                            <div className="allocation-bar">
+                              {assetGroups.map((g) => (
+                                <span
+                                  key={g.key}
+                                  style={{
+                                    width: `${(g.amount / total.assets) * 100}%`,
+                                    background: g.color,
+                                  }}
+                                  title={
+                                    privateMode
+                                      ? g.name
+                                      : `${g.name}: ${Math.round((g.amount / total.assets) * 100)}%`
+                                  }
+                                />
+                              ))}
+                            </div>
+                            <div className="allocation-legend">
+                              {assetGroups.map((g) => (
+                                <span key={g.key}>
+                                  <i style={{ background: g.color }} />
+                                  {g.name}
+                                  {!privateMode && (
+                                    <small>
+                                      {Math.round(
+                                        (g.amount / total.assets) * 100,
+                                      )}
+                                      %
+                                    </small>
+                                  )}
+                                </span>
+                              ))}
+                              {assetGroups.length === 0 && (
+                                <span>No asset balances yet</span>
+                              )}
+                            </div>
+                          </section>
+                        </div>
+                        <section className="accounts-section">
+                          <div className="section-heading">
+                            <h2>
+                              Your accounts <span>{shown.accounts.length}</span>
+                            </h2>
+                            <button
+                              className="text-button"
+                              onClick={() => nav("Accounts")}
+                            >
+                              View all accounts <ArrowRight size={14} />
+                            </button>
+                          </div>
+                          {table(shown.accounts.slice(0, 5))}
+                        </section>
+                      </>
+                    )}
+                  </>
+                )}
+                {view === "Accounts" && !account && (
+                  <>
+                    <div className="page-heading">
+                      <div>
+                        <div className="eyebrow">THE BUILDING BLOCKS</div>
+                        <h1>Accounts</h1>
+                        <p>A home for every part of your net worth.</p>
                       </div>
-                      <button
-                        className="button"
-                        disabled={sample || busy}
-                        onClick={() =>
-                          run(async () => {
-                            const imported = await window.worth?.importCsv();
-                            if (imported) {
-                              setData(imported);
-                              setToast("Balances imported");
-                            }
-                          })
-                        }
-                      >
-                        <Upload size={15} />
-                        Import CSV
+                      <button className="button primary" onClick={begin}>
+                        <Plus size={16} />
+                        Add account
                       </button>
                     </div>
-                    <div className="setting-row">
-                      <div>
-                        <strong>Export balance history</strong>
+                    <div className="accounts-total">
+                      <span>Across {shown.accounts.length} accounts</span>
+                      <strong>
+                        {money(total.net)}
+                        <small>net worth</small>
+                      </strong>
+                    </div>
+                    <div className="table-toolbar">
+                      <div className="tabs">
+                        {[
+                          ["all", "All accounts"],
+                          ["assets", "Assets"],
+                          ["debt", "Liabilities"],
+                        ].map(([key, title]) => (
+                          <button
+                            key={key}
+                            onClick={() => setFilter(key)}
+                            className={filter === key ? "selected" : ""}
+                          >
+                            {title}
+                          </button>
+                        ))}
+                      </div>
+                      <label className="search">
+                        <Search size={15} />
+                        <input
+                          aria-label="Search accounts"
+                          placeholder="Search accounts…"
+                          value={query}
+                          onChange={(e) => setQuery(e.target.value)}
+                        />
+                      </label>
+                    </div>
+                    {filtered.length ? (
+                      table(filtered)
+                    ) : (
+                      <div className="empty-state">
+                        <Wallet size={25} />
+                        <h2>
+                          {shown.accounts.length
+                            ? "No matching accounts"
+                            : "Room for your whole picture"}
+                        </h2>
                         <p>
-                          Take a readable copy of every balance to your
-                          spreadsheet.
+                          {shown.accounts.length
+                            ? "Try a different name or account type."
+                            : "Add cash, investments, property, or a liability to get started."}
+                        </p>
+                        {!shown.accounts.length && (
+                          <button className="button" onClick={begin}>
+                            <Plus size={15} />
+                            Add account
+                          </button>
+                        )}
+                      </div>
+                    )}
+                  </>
+                )}
+                {view === "Accounts" && account && (
+                  <>
+                    <button
+                      className="text-button back"
+                      onClick={() => setDetail(null)}
+                    >
+                      <ArrowLeft size={14} />
+                      All accounts
+                    </button>
+                    <div className="page-heading">
+                      <div>
+                        <div className="eyebrow">
+                          {groups[account.category].label.toUpperCase()}
+                        </div>
+                        <h1>{account.name}</h1>
+                        <p>
+                          {account.institution || "Personal account"} ·{" "}
+                          {account.currency}
+                        </p>
+                      </div>
+                      <button
+                        className="button primary"
+                        disabled={sample}
+                        onClick={() => setModal(account)}
+                      >
+                        <Plus size={16} />
+                        Update balance
+                      </button>
+                    </div>
+                    <section className="detail-balance">
+                      <div className="section-label">
+                        {account.category === "debt"
+                          ? "Outstanding balance"
+                          : "Current balance"}
+                      </div>
+                      <div className="net-worth">
+                        {money(
+                          (latest(shown, account.id)?.amountMinor || 0) / 100,
+                          account.currency,
+                          true,
+                        )}
+                        <span>{account.currency}</span>
+                      </div>
+                      <p className="muted">
+                        Last updated{" "}
+                        {dateLabel(latest(shown, account.id)?.date || today(), {
+                          month: "long",
+                          day: "numeric",
+                          year: "numeric",
+                        })}
+                        {account.currency !== shown.baseCurrency &&
+                          ` · ${money(value(latest(shown, account.id)))} in ${shown.baseCurrency}`}
+                      </p>
+                    </section>
+                    <div className="section-heading">
+                      <h2>Balance history</h2>
+                      <span className="muted">One balance per day</span>
+                    </div>
+                    <HistoryList
+                      data={shown}
+                      money={money}
+                      accountId={account.id}
+                      onEdit={sample ? undefined : (a) => setModal(a)}
+                    />
+                    {!sample && (
+                      <div className="danger-zone">
+                        <span>
+                          Deleting this account also removes its balance
+                          history.
+                        </span>
+                        <button
+                          className="text-button danger"
+                          onClick={() =>
+                            setModal({ ...account, id: "delete:" + account.id })
+                          }
+                        >
+                          <Trash2 size={14} />
+                          Delete account
+                        </button>
+                      </div>
+                    )}
+                  </>
+                )}
+                {view === "History" && (
+                  <>
+                    <div className="page-heading">
+                      <div>
+                        <div className="eyebrow">ONE UPDATE AT A TIME</div>
+                        <h1>History</h1>
+                        <p>
+                          The balance updates behind your financial picture.
                         </p>
                       </div>
                       <button
                         className="button"
-                        disabled={sample || busy || !data.entries.length}
+                        disabled={sample || !data.entries.length || busy}
                         onClick={() => exportData("csv")}
                       >
                         <Download size={15} />
                         Export CSV
                       </button>
                     </div>
-                    <div className="setting-row">
-                      <div>
-                        <strong>Local storage</strong>
+                    {shown.entries.length ? (
+                      <HistoryList data={shown} money={money} />
+                    ) : (
+                      <div className="empty-state">
+                        <History size={25} />
+                        <h2>Your history is ahead of you</h2>
                         <p>
-                          A SQLite database in this Mac’s application support
-                          folder.
+                          Start with an account. Each balance update will appear
+                          here.
+                        </p>
+                        <button className="button" onClick={begin}>
+                          <Plus size={15} />
+                          Add account
+                        </button>
+                      </div>
+                    )}
+                  </>
+                )}
+                {view === "Settings" && (
+                  <>
+                    <div className="page-heading">
+                      <div>
+                        <div className="eyebrow">MAKE YOURSELF AT HOME</div>
+                        <h1>Settings</h1>
+                        <p>Your workspace, your preferences.</p>
+                      </div>
+                    </div>
+                    <div className="settings-group">
+                      <h2>Workspace</h2>
+                      <div className="settings-card">
+                        <div className="setting-row">
+                          <div>
+                            <strong>Reporting currency</strong>
+                            <p>
+                              {data.accounts.length
+                                ? "Fixed for this workspace to preserve historical conversions."
+                                : "Choose your reporting currency before adding your first account."}
+                            </p>
+                          </div>
+                          <select
+                            aria-label="Reporting currency"
+                            disabled={!!data.accounts.length || sample || busy}
+                            value={data.baseCurrency}
+                            onChange={(e) =>
+                              run(async () => {
+                                setData(
+                                  await window.worth!.currency(e.target.value),
+                                );
+                                setToast("Reporting currency updated");
+                              })
+                            }
+                          >
+                            {currencies.map((c) => (
+                              <option key={c}>{c}</option>
+                            ))}
+                          </select>
+                        </div>
+                        <div className="setting-row">
+                          <div>
+                            <strong>Appearance</strong>
+                            <p>A light or dark space for your numbers.</p>
+                          </div>
+                          <div className="tabs theme-tabs">
+                            <button
+                              className={theme === "light" ? "selected" : ""}
+                              onClick={() => setTheme("light")}
+                            >
+                              <Sun size={15} />
+                              Light
+                            </button>
+                            <button
+                              className={theme === "dark" ? "selected" : ""}
+                              onClick={() => setTheme("dark")}
+                            >
+                              <Moon size={15} />
+                              Dark
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="settings-group">
+                      <h2>Your data</h2>
+                      <div className="settings-card">
+                        <div className="setting-row">
+                          <div>
+                            <strong>Back up your workspace</strong>
+                            <p>
+                              Save all accounts, balances, and currency settings
+                              as a JSON file.
+                            </p>
+                          </div>
+                          <button
+                            className="button"
+                            disabled={sample || busy}
+                            onClick={() => exportData("json")}
+                          >
+                            <Download size={15} />
+                            Save backup
+                          </button>
+                        </div>
+                        <div className="setting-row">
+                          <div>
+                            <strong>Restore a backup</strong>
+                            <p>
+                              Replace this workspace with a previously saved
+                              Worth backup.
+                            </p>
+                          </div>
+                          <button
+                            className="button"
+                            disabled={sample || busy}
+                            onClick={() =>
+                              run(async () => {
+                                const restored = await window.worth?.restore();
+                                if (restored) {
+                                  setData(restored);
+                                  setToast("Workspace restored");
+                                }
+                              })
+                            }
+                          >
+                            <Upload size={15} />
+                            Restore
+                          </button>
+                        </div>
+                        <div className="setting-row">
+                          <div>
+                            <strong>Import from a spreadsheet</strong>
+                            <p>
+                              Add dated balances using the Worth CSV format.{" "}
+                              <button
+                                className="text-button"
+                                disabled={sample || busy}
+                                onClick={() =>
+                                  run(async () => {
+                                    if (await window.worth?.export("template"))
+                                      setToast("CSV template saved");
+                                  })
+                                }
+                              >
+                                Download template
+                              </button>
+                            </p>
+                          </div>
+                          <button
+                            className="button"
+                            disabled={sample || busy}
+                            onClick={() =>
+                              run(async () => {
+                                const imported =
+                                  await window.worth?.importCsv();
+                                if (imported) {
+                                  setData(imported);
+                                  setToast("Balances imported");
+                                }
+                              })
+                            }
+                          >
+                            <Upload size={15} />
+                            Import CSV
+                          </button>
+                        </div>
+                        <div className="setting-row">
+                          <div>
+                            <strong>Export balance history</strong>
+                            <p>
+                              Take a readable copy of every balance to your
+                              spreadsheet.
+                            </p>
+                          </div>
+                          <button
+                            className="button"
+                            disabled={sample || busy || !data.entries.length}
+                            onClick={() => exportData("csv")}
+                          >
+                            <Download size={15} />
+                            Export CSV
+                          </button>
+                        </div>
+                        <div className="setting-row">
+                          <div>
+                            <strong>Local storage</strong>
+                            <p>
+                              A SQLite database in this Mac’s application
+                              support folder.
+                            </p>
+                          </div>
+                          <button
+                            className="button"
+                            onClick={() =>
+                              run(async () => {
+                                await window.worth?.location();
+                              })
+                            }
+                          >
+                            <FolderOpen size={15} />
+                            Show in Finder
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="privacy-note">
+                      <ShieldCheck size={20} />
+                      <div>
+                        <strong>Personal by design.</strong>
+                        <p>
+                          No cloud sync, tracking, or bank connections. Worth
+                          stores data locally; database and backup files are not
+                          encrypted by the app. Currency conversions use the
+                          manual rate recorded with each balance.
                         </p>
                       </div>
+                    </div>
+                    <div className="settings-footer">
+                      <span className="brand-mark">
+                        w<span>·</span>
+                      </span>
+                      <span>
+                        Worth{" "}
+                        <small>
+                          Version 0.1.0 · Based on Codex Desktop by MangoWork
+                        </small>
+                      </span>
                       <button
-                        className="button"
-                        onClick={() =>
-                          run(async () => {
-                            await window.worth?.location();
-                          })
-                        }
+                        className="text-button"
+                        onClick={() => {
+                          setSample(true);
+                          nav("Overview");
+                        }}
                       >
-                        <FolderOpen size={15} />
-                        Show in Finder
+                        Explore sample workspace <ArrowRight size={14} />
                       </button>
                     </div>
-                  </div>
-                  <div className="privacy-note">
-                    <ShieldCheck size={20} />
-                    <div>
-                      <strong>Personal by design.</strong>
-                      <p>
-                        No cloud sync, tracking, or bank connections. Worth
-                        stores data locally; database and backup files are not
-                        encrypted by the app. Currency conversions use the
-                        manual rate recorded with each balance.
-                      </p>
-                    </div>
-                  </div>
-                  <div className="settings-footer">
-                    <span className="brand-mark">
-                      w<span>·</span>
-                    </span>
-                    <span>
-                      Worth{" "}
-                      <small>
-                        Version 0.1.0 · Based on Codex Desktop by MangoWork
-                      </small>
-                    </span>
-                    <button
-                      className="text-button"
-                      onClick={() => {
-                        setSample(true);
-                        nav("Overview");
-                      }}
-                    >
-                      Explore sample workspace <ArrowRight size={14} />
-                    </button>
-                  </div>
-                </>
-              )}
-            </>
-          )}
+                  </>
+                )}
+              </>
+            )}
+          </div>
         </main>
         <footer className="footer-status worth-footer">
           <div className="footer-left">
@@ -1256,8 +1271,16 @@ function Chart({
           >
             <defs>
               <linearGradient id="chartFill" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#899a82" stopOpacity=".16" />
-                <stop offset="100%" stopColor="#899a82" stopOpacity="0" />
+                <stop
+                  offset="0%"
+                  stopColor="var(--chart-line)"
+                  stopOpacity=".16"
+                />
+                <stop
+                  offset="100%"
+                  stopColor="var(--chart-line)"
+                  stopOpacity="0"
+                />
               </linearGradient>
             </defs>
             {[0, 0.5, 1].map((t) => {
